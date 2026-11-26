@@ -91,5 +91,16 @@ export async function laddaMeny(
   hamtaFn: () => Promise<Ratt[]>,
   vidTillstand: (tillstand: Tillstand) => void,
 ): Promise<void> {
-  // TODO
+  vidTillstand({ typ: "laddar" });
+  try {
+    const ratter = await hamtaFn();
+    if (ratter.length === 0) {
+      vidTillstand({ typ: "tomt" });
+      return;
+    }
+    vidTillstand({ typ: "klar", ratter });
+  } catch (error) {
+    const meddelande = error instanceof Error ? error.message : String(error);
+    vidTillstand({ typ: "fel", meddelande });
+  }
 }
